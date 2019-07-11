@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script>
+        var words = ["tree", "rain", "bear", "encourage", "promise", "soup", "chess", "insurance", "pancakes", "stream"];
+        var chosen = "";
+        var display = [];
+        var guessed = [];
+        var wrongCount = 0;
+        var won = false;
+
+        function onLoad() {
+            chosen = words[Math.floor(Math.random() * words.length)];
+            var set = document.getElementById("guessed");
+            for (var i = 0; i < chosen.length; i++) {
+                display.push("_");
+                set.innerHTML += " _"
+            }
+            document.getElementById("input").maxLength = chosen.length;
+        }
+
+        function guess() {
+            if (wrongCount >= 6 || won) {
+                return;
+            }
+            var input = document.getElementById("input");
+            var letter = input.value;
+            var set = document.getElementById("guessed");
+            if (letter.length === 1 && chosen.includes(letter)) {
+                set.innerHTML = "";
+                for (var i = 0; i < chosen.length; i++) {
+                    if (chosen.charAt(i) === letter) {
+                        display[i] = letter;
+                    }
+                    set.innerHTML += " " + display[i];
+                }
+            } else if (set.innerHTML.indexOf("_") !== -1) {
+                wrongCount++;
+                document.getElementById("img").src = wrongCount + ".png";
+                if (wrongCount >= 6) {
+                    set.innerHTML = "The word was: <strong>" + chosen + "</strong><br /><emphasis>You lose</emphasis>!"
+                }
+            }
+
+            if (letter == chosen || display.indexOf("_") === -1) {
+                set.innerHTML = "The word was: <strong>" + chosen + "</strong><br /><emphasis>You won</emphasis>!"
+                won = true;
+            }
+
+            if (letter.length === 1 && guessed.indexOf(letter) === -1) {
+                document.getElementById("used").innerHTML += letter + " ";
+                guessed.push(letter);
+            }
+            input.value = "";
+            input.focus();
+        }
+    </script>
+</head>
+<body onload="onLoad()" style="margin: 50px">
+    <img height="300" id="img" src="base.png">
+    <p style="font-size: 20px;" id="guessed"></p>
+    <input id="input" />
+    <button onclick="guess()">Submit</button>
+    <p style="font-size: 16px;" id="used">Used letters: </p>
+</body>
+</html>
